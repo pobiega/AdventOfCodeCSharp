@@ -1,0 +1,21 @@
+﻿using AdventOfCodeSupport;
+
+namespace AdventOfCode2023._2023;
+
+public sealed class Day01 : AdventBase
+{
+    protected override void InternalOnLoad()
+    {
+        base.InternalOnLoad();
+    }
+
+    protected override object InternalPart1()
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override object InternalPart2()
+    {
+        throw new NotImplementedException();
+    }
+}
