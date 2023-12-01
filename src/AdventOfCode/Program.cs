@@ -1,34 +1,31 @@
-﻿using AdventOfCode2023;
+﻿using AdventOfCode;
+
 using AdventOfCodeSupport;
 
 var solutions = new AdventSolutions();
 
 var today = solutions.GetMostRecentDay();
 
-var done = await today.TrySolveSubmitPart1();
+await today.DownloadInputAsync();
 
-if (!done.HasValue)
+await TrySolve(1, x => x.TrySolveSubmitPart1());
+await TrySolve(2, x => x.TrySolveSubmitPart2());
+
+return;
+
+async Task TrySolve(int number, Func<AdventBase, Task<bool?>> func)
 {
-    Console.WriteLine("PAOC: Failed to solve/submit part 1");
-    return;
-}
+    bool? b = await func(today);
 
-if (!done.Value)
-{
-    Console.WriteLine("PAOC: Part 1 answer was wrong.");
-    return;
-}
+    if (!b.HasValue)
+    {
+        Console.WriteLine($"PAOC: Failed to solve/submit part {number}");
+        return;
+    }
 
-done = await today.TrySolveSubmitPart2();
-
-if (!done.HasValue)
-{
-    Console.WriteLine("PAOC: Failed to solve/submit part 2");
-    return;
-}
-
-if (!done.Value)
-{
-    Console.WriteLine("PAOC: Part 2 answer was wrong.");
-    return;
+    if (!b.Value)
+    {
+        Console.WriteLine($"PAOC: Part {number} answer was wrong.");
+        return;
+    }
 }

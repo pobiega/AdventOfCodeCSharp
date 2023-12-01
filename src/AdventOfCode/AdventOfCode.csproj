@@ -5,15 +5,15 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>AdventOfCode2023</RootNamespace>
-    </PropertyGroup>
+      <UserSecretsId>dd04ecda-3faa-471a-a7f0-686948bf0d38</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="AdventOfCodeSupport" Version="2.3.0" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="2022\Inputs\" />
+      <Folder Include="2023\Inputs\" />
     </ItemGroup>
 
 </Project>

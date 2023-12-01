@@ -1,6 +1,6 @@
 ﻿using AdventOfCodeSupport;
 
-namespace AdventOfCode2023._2022;
+namespace AdventOfCode._2022;
 
 public sealed class Day01 : AdventBase
 {

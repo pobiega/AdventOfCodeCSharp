@@ -1,4 +1,4 @@
-﻿namespace AdventOfCode2023;
+﻿namespace AdventOfCode;
 
 internal static class InputHelper
 {

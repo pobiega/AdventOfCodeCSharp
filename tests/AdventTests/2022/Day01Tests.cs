@@ -1,24 +1,25 @@
-using AdventOfCode2023._2022;
-using Shouldly;
+using AdventOfCode._2022;
+
+namespace AdventTests._2022;
 
 public class Day01Tests
 {
     private string _testInput = """
-                           1000
-                           2000
-                           3000
+                                1000
+                                2000
+                                3000
 
-                           4000
+                                4000
 
-                           5000
-                           6000
+                                5000
+                                6000
 
-                           7000
-                           8000
-                           9000
+                                7000
+                                8000
+                                9000
 
-                           10000
-                           """;
+                                10000
+                                """;
 
 
     [Fact]
