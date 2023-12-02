@@ -78,6 +78,6 @@ public sealed class Day01 : AdventBase
         var secondDigit = bestValue;
 
 
-        return CombineFirstAndLastDigit($"{firstDigit}{secondDigit}");
+        return int.Parse($"{firstDigit}{secondDigit}");
     }
 }
