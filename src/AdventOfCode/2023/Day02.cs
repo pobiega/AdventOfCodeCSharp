@@ -4,7 +4,7 @@ namespace AdventOfCode._2023;
 
 public sealed class Day02 : AdventBase
 {
-    private Game[] _games;
+    private Game[] _games = null!;
 
     protected override void InternalOnLoad()
     {
@@ -15,12 +15,12 @@ public sealed class Day02 : AdventBase
 
     protected override object InternalPart1()
     {
-        var maxReds = 12;
-        var maxGreens = 13;
-        var maxBlues = 14;
+        const int maxReds = 12;
+        const int maxGreens = 13;
+        const int maxBlues = 14;
 
         return _games
-            .Where(x => x.Sets.All(y => y.Red <= maxReds && y.Green <= maxGreens && y.Blue <= maxBlues))
+            .Where(x => x.Sets.All(y => y is { Red: <= maxReds, Green: <= maxGreens, Blue: <= maxBlues }))
             .Select(x => x.Id)
             .Sum();
     }

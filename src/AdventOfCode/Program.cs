@@ -8,8 +8,7 @@ var today = solutions.GetMostRecentDay();
 
 await today.DownloadInputAsync();
 
-await TrySolve(1, x => x.TrySolveSubmitPart1());
-await TrySolve(2, x => x.TrySolveSubmitPart2());
+today.Part1().Part2();
 
 return;
 
