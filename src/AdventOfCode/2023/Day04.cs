@@ -27,7 +27,9 @@ public sealed class Day04 : AdventBase
         var numbers = scores[1].Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
             .Select(int.Parse).ToArray();
 
-        return new ScratchCard(cardId, winningNumbers, numbers);
+        var numberOfWins = winningNumbers.Intersect(numbers).Count();
+
+        return new ScratchCard(cardId, numberOfWins);
     }
 
     // internal static List<ScratchCard> ParseCard(string input) =>
@@ -51,21 +53,14 @@ public sealed class Day04 : AdventBase
         foreach (ScratchCard card in _cards)
         {
             long cardPoints = 0;
-            foreach (int number in card.Numbers)
-            {
-                if (!card.WinningNumbers.Contains(number))
-                {
-                    continue;
-                }
 
-                if (cardPoints == 0)
+            for (int i = 0; i < card.NumberOfWins; i++)
+            {
+                cardPoints = cardPoints switch
                 {
-                    cardPoints = 1;
-                }
-                else
-                {
-                    cardPoints *= 2;
-                }
+                    0 => 1,
+                    _ => cardPoints * 2
+                };
             }
 
             points += cardPoints;
@@ -83,9 +78,7 @@ public sealed class Day04 : AdventBase
         {
             var card = cardQueue.Dequeue();
 
-            var wins = card.Numbers.Count(number => card.WinningNumbers.Contains(number));
-
-            for (int i = 0; i < wins; i++)
+            for (int i = 0; i < card.NumberOfWins; i++)
             {
                 var newCard = _cards.First(x => x.CardId == card.CardId + i + 1);
                 allCards.Add(newCard);
@@ -97,4 +90,4 @@ public sealed class Day04 : AdventBase
     }
 }
 
-internal record ScratchCard(int CardId, int[] WinningNumbers, int[] Numbers);
+internal record ScratchCard(int CardId, int NumberOfWins);
