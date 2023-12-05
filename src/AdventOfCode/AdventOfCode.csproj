@@ -10,6 +10,9 @@
 
     <ItemGroup>
       <PackageReference Include="AdventOfCodeSupport" Version="2.3.0" />
+      <PackageReference Include="morelinq" Version="4.1.0" />
+      <PackageReference Include="Pidgin" Version="3.2.2" />
+      <PackageReference Include="SuperLinq" Version="5.4.0" />
     </ItemGroup>
 
     <ItemGroup>
