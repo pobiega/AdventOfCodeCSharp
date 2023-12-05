@@ -57,7 +57,7 @@ public sealed class Day02 : AdventBase
 
             var setParts = parts[1].Split(';', StringSplitOptions.TrimEntries);
             var sets = setParts.Select(Set.Parse).ToArray();
-            var id = int.Parse(parts[0].Split(' ')[1]);
+            var id = parts[0].Split(' ')[1].ToInt32();
             return new Game(id, sets);
         }
     }
@@ -75,7 +75,7 @@ public sealed class Day02 : AdventBase
             foreach (string part in parts)
             {
                 var partData = part.Split(' ');
-                var number = int.Parse(partData[0]);
+                var number = partData[0].ToInt32();
                 var color = partData[1];
 
                 switch (color)

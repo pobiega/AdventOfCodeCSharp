@@ -12,13 +12,13 @@ public sealed class Day01 : AdventBase
         var first = source.First(char.IsDigit);
         var last = source.Last(char.IsDigit);
 
-        return $"{first}{last}".ToInt32();
+        return (first - '0') * 10 + (last - '0');
     }
 
     protected override object InternalPart2()
         => Input.Lines.Select(CombineFirstAndLastDigitP2).Sum();
 
-    private Dictionary<string, int> _numberLookup = new()
+    private readonly Dictionary<string, int> _numberLookup = new()
     {
         ["one"] = 1,
         ["two"] = 2,
