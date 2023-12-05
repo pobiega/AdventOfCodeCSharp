@@ -53,9 +53,8 @@ public sealed class Day05 : AdventBase
         var loc = humToLoc.GetRanges(hum);
 
         return loc
-                   .MinBy(x => x.From)!
-                   .From
-               - 1;
+            .MinBy(x => x.From)!
+            .From;
     }
 }
 
@@ -95,7 +94,7 @@ public class Day5Parser
             .Split(' ')
             .Select(long.Parse)
             .Chunk(2)
-            .Select(x => new LongRange(x[0], x[0] - 1))
+            .Select(x => new LongRange(x[0], x[0] + x[1]))
             .ToList();
     }
 }
@@ -213,4 +212,25 @@ public class MappedRange
     }
 }
 
-public record LongRange(long From, long To);
+public record LongRange
+{
+    public LongRange(long From, long To)
+    {
+        if (From > To)
+        {
+            throw new InvalidOperationException("From can't be greater than To");
+        }
+
+        this.From = From;
+        this.To = To;
+    }
+
+    public long From { get; init; }
+    public long To { get; init; }
+
+    public void Deconstruct(out long From, out long To)
+    {
+        From = this.From;
+        To = this.To;
+    }
+}
