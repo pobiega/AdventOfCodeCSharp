@@ -1,8 +1,4 @@
-﻿using System.Numerics;
-
-using AdventOfCodeSupport;
-
-namespace AdventTests._2023;
+﻿namespace AdventTests._2023;
 
 using AdventOfCode._2023;
 
@@ -44,18 +40,6 @@ public class Day05Tests
                                 56 93 4
                                 """;
 
-    [Fact]
-    public void Parsing()
-    {
-        var input = new InputBlock(_testInput);
-        var parser = new Day5Parser(input.Blocks);
-
-        var seeds = parser.ParseSeeds();
-        var seedToSoil = parser.ParseMap();
-
-        var actual = seedToSoil.Get(53);
-        actual.ShouldBe(55);
-    }
 
     [Fact]
     public void Part1()
@@ -67,52 +51,6 @@ public class Day05Tests
         day.Part1Answer.ShouldBe("35");
     }
 
-    [Fact]
-    public void SoilGetRange()
-    {
-        // 79 to 92
-        // 55 to 67
-        var ranges = new List<LongRange> { new(79, 79 + 14 - 1), new(55, 55 + 13 - 1), };
-
-        var block1 = new InputBlock("""
-                                    50 98 2
-                                    52 50 48
-                                    """);
-        // 98 99 -> 50 51
-        // 50 to 97 -> 52 to 99
-        var seedToSoil = RangeMap.Create(block1.Lines);
-
-        var actual = seedToSoil.GetRanges(ranges);
-        actual.Count.ShouldBe(2);
-        actual[0].ShouldBeEquivalentTo(new LongRange(81, 94));
-        actual[1].ShouldBeEquivalentTo(new LongRange(57, 69));
-    }
-
-    [Fact]
-    public void ManualGetRange()
-    {
-        var ranges = new List<LongRange>
-        {
-            new(10, 20), // before any range
-            new(30, 40), // overlap on start
-            new(50, 60), // overlap on end
-            new(70, 80), // after any range
-        };
-
-        var block1 = new InputBlock("""
-                                    95 35 21
-                                    """);
-        var rangeMap = RangeMap.Create(block1.Lines);
-
-        var actual = rangeMap.GetRanges(ranges);
-
-        actual[0].ShouldBeEquivalentTo(ranges[0]);
-        actual[1].ShouldBeEquivalentTo(new LongRange(30, 35));
-        actual[2].ShouldBeEquivalentTo(new LongRange(95, 100));
-        actual[3].ShouldBeEquivalentTo(new LongRange(110, 115));
-        actual[4].ShouldBeEquivalentTo(new LongRange(55, 60));
-        actual.Last().ShouldBeEquivalentTo(ranges[3]);
-    }
 
     [Fact]
     public void Part2()

@@ -16,36 +16,24 @@ public sealed class Day04 : AdventBase
     {
         var gameAndScore = arg.Split(':', StringSplitOptions.TrimEntries);
 
-        var cardId = int.Parse(gameAndScore[0]
-            .Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)[1]);
+        var cardId = gameAndScore[0]
+            .Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)[1]
+            .ToInt32();
 
         var scores = gameAndScore[1].Split('|', StringSplitOptions.TrimEntries);
 
         var winningNumbers = scores[0]
             .Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Select(int.Parse)
             .ToArray();
-        var numbers = scores[1].Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
+
+        var numbers = scores[1]
+            .Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
             .Select(int.Parse).ToArray();
 
         var numberOfWins = winningNumbers.Intersect(numbers).Count();
 
         return new ScratchCard(cardId, numberOfWins);
     }
-
-    // internal static List<ScratchCard> ParseCard(string input) =>
-    //     String("Card ")
-    //         .Then(Num)
-    //         .Before(String(": "))
-    //         .Bind<char, IEnumerable<ScratchCard>>(cardId => (
-    //             Num
-    //                 .Separated(String(" "))
-    //                 .Before(String(" | "))
-    //                 .Map(x => new ScratchCard(cardId, x.ToArray(), null!))
-    //         )
-    //         .Separated(String("\n"))
-    //         .ParseOrThrow(input)
-    //         .ToList());
-
 
     protected override object InternalPart1()
     {

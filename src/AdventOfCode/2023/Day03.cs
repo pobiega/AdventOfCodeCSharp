@@ -46,7 +46,7 @@ public sealed class Day03 : AdventBase
 
         for (int i = x; i < x + length; i++)
         {
-            foreach ((int x, int y) offset in AdjacentOffsets)
+            foreach (var offset in AdjacentOffsets)
             {
                 var newX = i + offset.x;
                 newX = Math.Clamp(newX, 0, _width);
@@ -77,7 +77,7 @@ public sealed class Day03 : AdventBase
 
             if (buffer.Count > 0)
             {
-                var num = int.Parse(new string(buffer.ToArray()));
+                var num = new string(buffer.ToArray()).ToInt32();
                 yield return new NumericLocation(num, x, lineNumber);
 
                 x += buffer.Count + 1;
@@ -90,7 +90,7 @@ public sealed class Day03 : AdventBase
 
         if (buffer.Count > 0)
         {
-            var num = int.Parse(new string(buffer.ToArray()));
+            var num = new string(buffer.ToArray()).ToInt32();
             yield return new NumericLocation(num, x, lineNumber);
 
             buffer.Clear();

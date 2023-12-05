@@ -5,22 +5,18 @@ namespace AdventOfCode._2023;
 public sealed class Day01 : AdventBase
 {
     protected override object InternalPart1()
-    {
-        return Input.Lines.Select(CombineFirstAndLastDigit).Sum();
-    }
+        => Input.Lines.Select(CombineFirstAndLastDigit).Sum();
 
     private int CombineFirstAndLastDigit(string source)
     {
         var first = source.First(char.IsDigit);
         var last = source.Last(char.IsDigit);
 
-        return int.Parse($"{first}{last}");
+        return $"{first}{last}".ToInt32();
     }
 
     protected override object InternalPart2()
-    {
-        return Input.Lines.Select(CombineFirstAndLastDigitP2).Sum();
-    }
+        => Input.Lines.Select(CombineFirstAndLastDigitP2).Sum();
 
     private Dictionary<string, int> _numberLookup = new()
     {
@@ -78,6 +74,6 @@ public sealed class Day01 : AdventBase
         var secondDigit = bestValue;
 
 
-        return int.Parse($"{firstDigit}{secondDigit}");
+        return $"{firstDigit}{secondDigit}".ToInt32();
     }
 }

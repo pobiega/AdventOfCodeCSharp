@@ -4,233 +4,77 @@ namespace AdventOfCode._2023;
 
 public sealed class Day05 : AdventBase
 {
+    protected override void InternalOnLoad()
+    {
+        base.InternalOnLoad();
+    }
+
     protected override object InternalPart1()
     {
-        var parser = new Day5Parser(Input.Blocks);
-        var seeds = parser.ParseSeeds();
-        var seedToSoil = parser.ParseMap();
-        var soilToFert = parser.ParseMap();
-        var fertToWater = parser.ParseMap();
-        var waterToLight = parser.ParseMap();
-        var lightToTemp = parser.ParseMap();
-        var tempToHum = parser.ParseMap();
-        var humToLoc = parser.ParseMap();
+        var (seeds, maps) = Parse();
 
-        var location = seeds
-            .Select(x => seedToSoil.Get(x))
-            .Select(x => soilToFert.Get(x))
-            .Select(x => fertToWater.Get(x))
-            .Select(x => waterToLight.Get(x))
-            .Select(x => lightToTemp.Get(x))
-            .Select(x => tempToHum.Get(x))
-            .Select(x => humToLoc.Get(x))
-            .Min();
+        return seeds.Min(seed => maps.Aggregate(seed, MapForward));
+    }
 
-        return location;
+    private long MapForward(long value, List<(long Dst, long Src, long Len)> map)
+    {
+        foreach (var range in map)
+        {
+            if (range.Src <= value && value < range.Src + range.Len)
+            {
+                return range.Dst - range.Src + value;
+            }
+        }
+
+        return value;
+    }
+
+    private long MapReverse(long value, List<(long Dst, long Src, long Len)> map)
+    {
+        foreach (var range in map)
+        {
+            if (range.Dst <= value && value < range.Dst + range.Len)
+            {
+                return range.Src - range.Dst + value;
+            }
+        }
+
+        return value;
+    }
+
+    private (List<long> seeds, List<List<(long Dst, long Src, long Len)>> maps) Parse()
+    {
+        var seeds = Input.Lines.First().Split(' ').Skip(1).Select(x => x.ToInt64()).ToList();
+        var maps = new List<List<(long, long, long)>>();
+
+        foreach (var line in Input.Lines.Skip(1))
+        {
+            if (line.Length is 0)
+            {
+                continue;
+            }
+
+            if (line.EndsWith(':'))
+            {
+                maps.Add([]);
+            }
+            else
+            {
+                var values = line.Split(' ').ToInt64();
+                maps[^1].Add((values[0], values[1], values[2]));
+            }
+        }
+
+        return (seeds, maps);
     }
 
     protected override object InternalPart2()
     {
-        var parser = new Day5Parser(Input.Blocks);
-        var seeds = parser.ParseSeedRange();
+        var (seeds, maps) = Parse();
 
-        var seedToSoil = parser.ParseMap();
-        var soilToFert = parser.ParseMap();
-        var fertToWater = parser.ParseMap();
-        var waterToLight = parser.ParseMap();
-        var lightToTemp = parser.ParseMap();
-        var tempToHum = parser.ParseMap();
-        var humToLoc = parser.ParseMap();
-
-        var maps = new[] { seedToSoil, soilToFert, fertToWater, waterToLight, lightToTemp, tempToHum, humToLoc };
-
-        var soil = seedToSoil.GetRanges(seeds);
-        var fert = soilToFert.GetRanges(soil);
-        var water = fertToWater.GetRanges(fert);
-        var light = waterToLight.GetRanges(water);
-        var temp = lightToTemp.GetRanges(light);
-        var hum = tempToHum.GetRanges(temp);
-        var loc = humToLoc.GetRanges(hum);
-
-        return loc
-            .MinBy(x => x.From)!
-            .From;
-    }
-}
-
-public class Day5Parser
-{
-    private Queue<InputBlock> _inputBlocks;
-
-    public Day5Parser(InputBlock[] inputBlocks)
-    {
-        _inputBlocks = inputBlocks.ToQueue();
-    }
-
-    public List<long> ParseSeeds()
-    {
-        var block = _inputBlocks.Dequeue();
-
-        var line = block.Text;
-        var split = line.Split(": ")[1].Split(' ').Select(long.Parse);
-
-        return split.ToList();
-    }
-
-    public RangeMap ParseMap()
-    {
-        var block = _inputBlocks.Dequeue();
-        var lines = block.Lines.Skip(1);
-        return RangeMap.Create(lines);
-    }
-
-    public List<LongRange> ParseSeedRange()
-    {
-        var block = _inputBlocks.Dequeue();
-        var line = block.Text;
-
-        return line
-            .Split(": ")[1]
-            .Split(' ')
-            .Select(long.Parse)
-            .Chunk(2)
-            .Select(x => new LongRange(x[0], x[0] + x[1]))
-            .ToList();
-    }
-}
-
-public class RangeMap
-{
-    public MappedRange[] MappedRanges { get; }
-
-    private RangeMap(MappedRange[] mappedRanges)
-    {
-        MappedRanges = mappedRanges;
-    }
-
-    public static RangeMap Create(IEnumerable<string> lines)
-    {
-        var x = lines
-            .Select(x => x.Split(' ').Select(long.Parse).ToArray())
-            .Select(line => new MappedRange(line[0], line[1], line[2]))
-            .OrderBy(x => x.From)
-            .ToArray();
-
-        return new RangeMap(x);
-    }
-
-    public long Get(long key)
-    {
-        foreach (MappedRange range in MappedRanges)
-        {
-            var rangeValue = range.Get(key);
-            if (rangeValue.HasValue)
-            {
-                return rangeValue.Value;
-            }
-        }
-
-        return key;
-    }
-
-    public List<LongRange> GetRanges(List<LongRange> ranges)
-    {
-        var newRanges = new List<LongRange>(ranges.Count * 2);
-
-        foreach (LongRange range in ranges)
-        {
-            var (from, to) = range;
-
-            bool addEnding = true;
-            foreach (MappedRange mappedRange in MappedRanges)
-            {
-                if (from > mappedRange.To)
-                {
-                    continue;
-                }
-
-                if (to <= mappedRange.From)
-                {
-                    newRanges.Add(range);
-                    addEnding = false;
-                    break;
-                }
-
-                // we have an overlap
-
-                if (from < mappedRange.From)
-                {
-                    newRanges.Add(new LongRange(from, mappedRange.From));
-                    from = mappedRange.From;
-                }
-
-                var startOffset = mappedRange.Adjustment + from;
-                if (to <= mappedRange.To)
-                {
-                    newRanges.Add(new LongRange(startOffset, mappedRange.Adjustment + to));
-                    addEnding = false;
-                    break;
-                }
-
-                newRanges.Add(new LongRange(startOffset, mappedRange.Adjustment + mappedRange.To));
-                from = mappedRange.To;
-            }
-
-            if (addEnding && from != to)
-            {
-                newRanges.Add(new LongRange(from, to));
-            }
-        }
-
-        return newRanges;
-    }
-}
-
-public class MappedRange
-{
-    public MappedRange(long destinationStart, long sourceStart, long length)
-    {
-        Adjustment = destinationStart - sourceStart;
-        From = sourceStart;
-        To = sourceStart + length - 1;
-    }
-
-    public long To { get; }
-
-    public long From { get; }
-
-    public long Adjustment { get; }
-
-    public long? Get(long key)
-    {
-        if (key >= From && key <= To)
-        {
-            return key + Adjustment;
-        }
-
-        return null;
-    }
-}
-
-public record LongRange
-{
-    public LongRange(long From, long To)
-    {
-        if (From > To)
-        {
-            throw new InvalidOperationException("From can't be greater than To");
-        }
-
-        this.From = From;
-        this.To = To;
-    }
-
-    public long From { get; init; }
-    public long To { get; init; }
-
-    public void Deconstruct(out long From, out long To)
-    {
-        From = this.From;
-        To = this.To;
+        return maps
+            .SelectMany((map, i) => map.Select(range => maps.Take(i + 1).Reverse().Aggregate(range.Dst, MapReverse)))
+            .Where(seed => seeds.Chunk(2).Any(pair => pair[0] <= seed && seed < pair[0] + pair[1]))
+            .Min(seed => maps.Aggregate(seed, MapForward));
     }
 }
