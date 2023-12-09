@@ -75,8 +75,7 @@ public sealed class Day07 : AdventBase
     }
 
     public static CamelCard CharToCard(char c)
-    {
-        return c switch
+        => c switch
         {
             '2' => CamelCard.Two,
             '3' => CamelCard.Three,
@@ -93,9 +92,8 @@ public sealed class Day07 : AdventBase
             'A' => CamelCard.A,
             _ => throw new ArgumentException($"Invalid character {c}", nameof(c))
         };
-    }
 
-    private static readonly HandComparer _part2Comparer = new(true);
+    private static readonly HandComparerPart2 _part2Comparer = new();
     private static readonly HandComparer _part1Comparer = new();
 
     public static CamelHand MakeStrongestHand(CamelHand hand)
@@ -105,23 +103,21 @@ public sealed class Day07 : AdventBase
             return hand;
         }
 
+        if (hand.Cards.All(x => x == CamelCard.J))
+        {
+            return hand;
+        }
+
+        var upgradeJTo = hand.Cards
+            .GroupBy(x => x)
+            .Select(g => (Count: g.Count(), Card: g.Key))
+            .Where(x => x.Card != CamelCard.J)
+            .MaxBy(g => g.Count)
+            .Card;
+
         var handStr = hand.ToString();
-
-        var potentialHands = Enum.GetValues<CamelCard>()
-            .Select(card => handStr.Replace("J", card.GetStrValue()))
-            .Select(ParseOne)
-            .OrderByDescending(x => x.Type)
-            .ToList();
-
-        var bestType = potentialHands[0].Type;
-
-        potentialHands = potentialHands
-            .Where(y => y.Type == bestType)
-            .ToList();
-
-        potentialHands.Sort(_part2Comparer);
-
-        return potentialHands[0];
+        var newHandStr = handStr.Replace("J", upgradeJTo.GetStrValue());
+        return ParseOne(newHandStr);
     }
 }
 
@@ -161,13 +157,6 @@ public record CamelHand(CamelCard[] Cards, HandType Type, int Bid)
 
 public class HandComparer : Comparer<CamelHand>
 {
-    private readonly bool _isPart2;
-
-    public HandComparer(bool isPart2 = false)
-    {
-        _isPart2 = isPart2;
-    }
-
     public override int Compare(CamelHand? x, CamelHand? y)
     {
         if (x is null || y is null)
@@ -177,18 +166,7 @@ public class HandComparer : Comparer<CamelHand>
 
         if (x.Type != y.Type)
         {
-            if (!_isPart2)
-            {
-                return x.Type.CompareTo(y.Type);
-            }
-
-            var newX = Day07.MakeStrongestHand(x);
-            var newY = Day07.MakeStrongestHand(y);
-
-            if (newX.Type != newY.Type)
-            {
-                return newX.Type.CompareTo(newY.Type);
-            }
+            return x.Type.CompareTo(y.Type);
         }
 
         foreach ((CamelCard first, CamelCard second) in x.Cards.Zip(y.Cards))
@@ -198,13 +176,41 @@ public class HandComparer : Comparer<CamelHand>
                 continue;
             }
 
-            if (_isPart2)
+            return first.CompareTo(second);
+        }
+
+        return 0;
+    }
+}
+
+public class HandComparerPart2 : Comparer<CamelHand>
+{
+    public override int Compare(CamelHand? x, CamelHand? y)
+    {
+        if (x is null || y is null)
+        {
+            throw new ArgumentNullException("x or y", "Can't compare nulls");
+        }
+
+        var strongestX = Day07.MakeStrongestHand(x);
+        var strongestY = Day07.MakeStrongestHand(y);
+
+        if (strongestX.Type != strongestY.Type)
+        {
+            return strongestX.Type.CompareTo(strongestY.Type);
+        }
+
+        foreach ((CamelCard first, CamelCard second) in x.Cards.Zip(y.Cards))
+        {
+            if (first == second)
             {
-                if (first == CamelCard.J)
-                    return -1;
-                if (second == CamelCard.J)
-                    return 1;
+                continue;
             }
+
+            if (first == CamelCard.J)
+                return -1;
+            if (second == CamelCard.J)
+                return 1;
 
             return first.CompareTo(second);
         }

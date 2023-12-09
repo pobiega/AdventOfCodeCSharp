@@ -32,32 +32,33 @@ public class Day07Tests
         day.Part2Answer.ShouldBe("5905");
     }
 
-    [Fact]
-    public void CanUpgrade()
+    [Theory]
+    [InlineData("JJQQQ 1", HandType.FiveOfAKind)]
+    [InlineData("QJJQ2 500", HandType.FourOfAKind)]
+    [InlineData("J39Q5 1", HandType.OnePair)]
+    public void CanUpgrade(string source, HandType expected)
     {
-        var hand = Day07.ParseOne("QJJQ2 500");
+        var hand = Day07.ParseOne(source);
         var upgraded = Day07.MakeStrongestHand(hand);
-
-        upgraded.Type.ShouldBe(HandType.FourOfAKind);
-
-        var fiveHand = Day07.ParseOne("JJQQQ 1");
-        var upgFiveHand = Day07.MakeStrongestHand(fiveHand);
-        upgFiveHand.Type.ShouldBe(HandType.FiveOfAKind);
+        upgraded.Type.ShouldBe(expected);
     }
+
 
     [Fact]
     public void Idk()
     {
-        var hand1 = Day07.ParseOne("JJQQQ 1");
+        var hand1 = Day07.ParseOne("JJQQQ 2");
         var hand2 = Day07.ParseOne("QQQQQ 2");
-        var hand3 = Day07.ParseOne("JJJJJ 3");
-        var hand4 = Day07.ParseOne("JJJJ2 3");
+        var hand3 = Day07.ParseOne("JJJJJ 2");
+        var hand4 = Day07.ParseOne("JJJJ2 2");
 
         var hands = new List<CamelHand> { hand2, hand1, hand3, hand4 };
 
-        hands.Sort(new HandComparer(true));
+        hands.Sort(new HandComparerPart2());
 
-        hands[0].ToString().ShouldBe("JJQQQ 1");
-        hands[1].ToString().ShouldBe("QQQQQ 2");
+        hands[0].ToString().ShouldBe("JJJJ2 2");
+        hands[1].ToString().ShouldBe("JJJJJ 2");
+        hands[2].ToString().ShouldBe("JJQQQ 2");
+        hands[3].ToString().ShouldBe("QQQQQ 2");
     }
 }
