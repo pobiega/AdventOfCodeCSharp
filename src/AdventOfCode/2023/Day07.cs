@@ -65,9 +65,13 @@ public sealed class Day07 : AdventBase
     protected override object InternalPart2()
     {
         var hands = Parse();
-        hands.Sort(_part2Comparer);
+        var newHands = hands
+            .Select(x => new CamelHand(x.Cards, MakeStrongestHand(x).Type, x.Bid))
+            .ToList();
 
-        var score = hands
+        newHands.Sort(_part2Comparer);
+
+        var score = newHands
             .Select((hand, i) => hand.Bid * (i + 1))
             .Sum();
 
@@ -93,7 +97,7 @@ public sealed class Day07 : AdventBase
             _ => throw new ArgumentException($"Invalid character {c}", nameof(c))
         };
 
-    private static readonly HandComparerPart2 _part2Comparer = new();
+    private static readonly HandComparer _part2Comparer = new(true);
     private static readonly HandComparer _part1Comparer = new();
 
     public static CamelHand MakeStrongestHand(CamelHand hand)
@@ -157,6 +161,13 @@ public record CamelHand(CamelCard[] Cards, HandType Type, int Bid)
 
 public class HandComparer : Comparer<CamelHand>
 {
+    private readonly bool _isPart2;
+
+    public HandComparer(bool isPart2 = false)
+    {
+        _isPart2 = isPart2;
+    }
+
     public override int Compare(CamelHand? x, CamelHand? y)
     {
         if (x is null || y is null)
@@ -176,41 +187,13 @@ public class HandComparer : Comparer<CamelHand>
                 continue;
             }
 
-            return first.CompareTo(second);
-        }
-
-        return 0;
-    }
-}
-
-public class HandComparerPart2 : Comparer<CamelHand>
-{
-    public override int Compare(CamelHand? x, CamelHand? y)
-    {
-        if (x is null || y is null)
-        {
-            throw new ArgumentNullException("x or y", "Can't compare nulls");
-        }
-
-        var strongestX = Day07.MakeStrongestHand(x);
-        var strongestY = Day07.MakeStrongestHand(y);
-
-        if (strongestX.Type != strongestY.Type)
-        {
-            return strongestX.Type.CompareTo(strongestY.Type);
-        }
-
-        foreach ((CamelCard first, CamelCard second) in x.Cards.Zip(y.Cards))
-        {
-            if (first == second)
+            if (_isPart2)
             {
-                continue;
+                if (first == CamelCard.J)
+                    return -1;
+                if (second == CamelCard.J)
+                    return 1;
             }
-
-            if (first == CamelCard.J)
-                return -1;
-            if (second == CamelCard.J)
-                return 1;
 
             return first.CompareTo(second);
         }

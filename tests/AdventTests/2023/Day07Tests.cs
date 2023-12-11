@@ -42,23 +42,4 @@ public class Day07Tests
         var upgraded = Day07.MakeStrongestHand(hand);
         upgraded.Type.ShouldBe(expected);
     }
-
-
-    [Fact]
-    public void Idk()
-    {
-        var hand1 = Day07.ParseOne("JJQQQ 2");
-        var hand2 = Day07.ParseOne("QQQQQ 2");
-        var hand3 = Day07.ParseOne("JJJJJ 2");
-        var hand4 = Day07.ParseOne("JJJJ2 2");
-
-        var hands = new List<CamelHand> { hand2, hand1, hand3, hand4 };
-
-        hands.Sort(new HandComparerPart2());
-
-        hands[0].ToString().ShouldBe("JJJJ2 2");
-        hands[1].ToString().ShouldBe("JJJJJ 2");
-        hands[2].ToString().ShouldBe("JJQQQ 2");
-        hands[3].ToString().ShouldBe("QQQQQ 2");
-    }
 }
